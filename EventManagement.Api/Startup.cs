@@ -17,8 +17,9 @@ public static class Startup
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IEventService, EventService>();
+
         services.AddAutoMapper(typeof(EventMappingProfile));
         services.AddSignalR();
         services.AddControllers();
@@ -74,6 +75,7 @@ public static class Startup
         {
             endpoints.MapControllers();
             endpoints.MapHub<EventHub>("/eventHub");
+            endpoints.MapHub<BlockchainHub>("/blockchainHub");
         });
 
         return app;
