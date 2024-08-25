@@ -23,7 +23,7 @@ public class EventsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents()
     {
-        var data = await _eventService.GetAllEventsAsync();
+        var data = await _eventService.GetAllAsync();
 
         if (data == null)
         {
@@ -35,9 +35,9 @@ public class EventsController : ControllerBase
 
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<EventDto>> GetEvent(int id)
+    public async Task<ActionResult<EventDto>> GetEvent(Guid id)
     {
-        var eventDto = await _eventService.GetEventByIdAsync(id);
+        var eventDto = await _eventService.GetByIdAsync(id);
         if (eventDto == null)
         {
             return NotFound();
@@ -48,7 +48,7 @@ public class EventsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> CreateEvent(EventDto eventDto)
     {
-        await _eventService.CreateEventAsync(eventDto);
+        await _eventService.CreateAsync(eventDto);
 
         // Notify clients about the new event
         await _hubContext.Clients.All.SendAsync("ReceiveUpdate", "A new event has been created.");
@@ -59,7 +59,7 @@ public class EventsController : ControllerBase
     [HttpPut]
     public async Task<ActionResult> UpdateEvent(EventDto eventDto)
     {
-        await _eventService.UpdateEventAsync(eventDto);
+        await _eventService.UpdateAsync(eventDto);
 
         await _hubContext.Clients.All.SendAsync("ReceiveUpdate", "An event has been updated.");
 
@@ -67,9 +67,9 @@ public class EventsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteEvent(int id)
+    public async Task<ActionResult> DeleteEvent(Guid id)
     {
-        await _eventService.DeleteEventAsync(id);
+        await _eventService.DeleteAsync(id);
 
         await _hubContext.Clients.All.SendAsync("ReceiveUpdate", "An event has been deleted.");
         return Ok();
